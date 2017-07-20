@@ -1,3 +1,3 @@
-package model.SunInfo
+package model
 
 case class SunInfo(sunrise: String, sunset: String)
