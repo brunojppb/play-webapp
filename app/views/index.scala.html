@@ -1,4 +1,5 @@
-@()
+@import model.SunInfo.SunInfo
+@(sunInfo: SunInfo)
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -7,6 +8,8 @@
            href="@routes.Assets.versioned("images/favicon.png")">
     </head>
     <body>
-        <h1>Hello Play @{Math.random}</h1>
+        <h1>Sun Info</h1>
+        <h2>Sunrise Time: @sunInfo.sunrise</h2>
+        <h2>Sunset Time: @sunInfo.sunset</h2>
     </body>
 </html>
