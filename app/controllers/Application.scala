@@ -1,5 +1,7 @@
 package controllers
 
+import java.time.{ZoneId, ZonedDateTime}
+import java.time.format.DateTimeFormatter
 import javax.inject._
 
 import model.SunInfo.SunInfo
@@ -20,7 +22,10 @@ class Application @Inject() (components: ControllerComponents, ws: WSClient)(imp
         response =>
           val sunriseTime = (response.json \ "results" \ "sunrise").as[String]
           val sunsetTime = (response.json \ "results" \ "sunset").as[String]
-          val sunInfo = SunInfo(sunriseTime, sunsetTime)
+          val sunr = ZonedDateTime.parse(sunriseTime)
+          val suns = ZonedDateTime.parse(sunsetTime)
+          val formatter = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.of("Australia/Sydney"))
+          val sunInfo = SunInfo(sunr.format(formatter), suns.format(formatter))
           Ok(views.html.index(sunInfo))
       }
   }
