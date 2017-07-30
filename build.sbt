@@ -9,7 +9,8 @@ libraryDependencies ++= Seq(
   jdbc,
   ehcache,
   ws,
-  guice
+  "com.softwaremill.macwire" %% "macros" % "2.3.0" % "provided"
+
 )
 
 resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"

@@ -2,17 +2,15 @@ package controllers
 
 import javax.inject._
 
-import play.api.libs.ws.WSClient
 import play.api.mvc._
 import service.{SunService, WeatherService}
 import scala.concurrent.ExecutionContext
 
 
-class Application @Inject() (components: ControllerComponents, ws: WSClient)(implicit ec: ExecutionContext)
-    extends AbstractController(components) {
-
-  val sunService = new SunService(ws)
-  val weatherService = new WeatherService(ws)
+class ApplicationController @Inject()(components: ControllerComponents,
+                                      sunService: SunService,
+                                      weatherService: WeatherService)(implicit ec: ExecutionContext)
+                              extends AbstractController(components) {
 
   def index = Action.async {
     val lat = 33.8830
