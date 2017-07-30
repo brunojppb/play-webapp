@@ -7,6 +7,7 @@ import play.api.mvc._
 import router.Routes
 import com.softwaremill.macwire._
 import _root_.controllers.AssetsComponents
+import filter.StatsFilter
 import play.api.routing.Router
 import play.filters.HttpFiltersComponents
 import service.{SunService, WeatherService}
@@ -33,13 +34,16 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   lazy val applicationController = wire[ApplicationController]
   lazy val sunService = wire[SunService]
   lazy val weatherService = wire[WeatherService]
+  lazy val statsFilter = wire[StatsFilter]
+
+  override def httpFilters: Seq[EssentialFilter] = Seq(statsFilter)
 
   val onStart = {
     Logger.info("The app is about to start")
   }
 
   applicationLifecycle.addStopHook { () =>
-    Logger.info("The is about to stop")
+    Logger.info("The app is about to stop")
     Future.successful(Unit)
   }
 
