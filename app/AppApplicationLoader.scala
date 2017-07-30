@@ -11,9 +11,12 @@ import actors.StatsActor
 import actors.StatsActor.Ping
 import akka.actor.Props
 import filters.StatsFilter
+import play.api.db.{DBComponents, HikariCPComponents}
+import play.api.db.evolutions.{DynamicEvolutions, EvolutionsComponents}
 import play.api.routing.Router
 import play.filters.HttpFiltersComponents
 import service.{SunService, WeatherService}
+import scalikejdbc.config.DBs
 
 import scala.concurrent.Future
 
@@ -29,7 +32,8 @@ class AppApplicationLoader extends ApplicationLoader {
 
 }
 
-class AppComponents(context: Context) extends BuiltInComponentsFromContext(context) with AhcWSComponents with AssetsComponents with HttpFiltersComponents {
+class AppComponents(context: Context) extends BuiltInComponentsFromContext(context)
+  with AhcWSComponents with HttpFiltersComponents with EvolutionsComponents with DBComponents with HikariCPComponents with AssetsComponents {
 
   override lazy val controllerComponents = wire[DefaultControllerComponents]
   lazy val prefix: String = "/"
@@ -42,13 +46,18 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
 
   override def httpFilters: Seq[EssentialFilter] = Seq(statsFilter)
 
+  override lazy val dynamicEvolutions = new DynamicEvolutions
+
   val onStart = {
     statsActor ! Ping
+    applicationEvolutions
+    DBs.setupAll()
     Logger.info("The app is about to start")
   }
 
   applicationLifecycle.addStopHook { () =>
     Logger.info("The app is about to stop")
+    DBs.closeAll()
     Future.successful(Unit)
   }
 
