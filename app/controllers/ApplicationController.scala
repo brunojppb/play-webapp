@@ -4,6 +4,8 @@ import actors.StatsActor
 import akka.actor.ActorSystem
 import akka.pattern._
 import akka.util.Timeout
+import model.CombinedData
+import play.api.libs.json.Json
 import play.api.mvc._
 import service.{SunService, WeatherService}
 
@@ -21,7 +23,11 @@ class ApplicationController (components: ControllerComponents,
   // - an implicit timeout must be in scope
   // - ? returns an Future[Any] that must be casted with mapTo
 
-  def index = Action.async {
+  def index = Action {
+    Ok(views.html.index())
+  }
+
+  def data = Action.async {
     val lat = 33.8830
     val lng = 151.2167
     implicit val timeout = Timeout(5.seconds)
@@ -31,9 +37,8 @@ class ApplicationController (components: ControllerComponents,
       temperature <- weatherService.getTemperature(lat, lng)
       requestCount <- (actorSystem.actorSelection(StatsActor.path) ? StatsActor.GetStats).mapTo[Int]
     } yield {
-      Ok(views.html.index(sunInfo, temperature, requestCount))
+      Ok(Json.toJson(CombinedData(sunInfo, temperature, requestCount)))
     }
-
   }
 
 }

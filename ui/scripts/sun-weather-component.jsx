@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 
 export default class SunWeatherComponent extends React.Component {
 
@@ -10,6 +11,19 @@ export default class SunWeatherComponent extends React.Component {
             temperature: null,
             requests: null
         };
+    }
+
+    componentDidMount() {
+        axios.get('/data')
+        .then((response) => {
+            const json = response.data;
+            this.setState({
+                sunrise: json.sunInfo.sunrise,
+                sunset: json.sunInfo.sunset,
+                temperature: json.temperature,
+                requests: json.requests
+            });
+        });
     }
 
     render() {
