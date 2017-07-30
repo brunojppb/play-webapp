@@ -5,4 +5,5 @@ target
 /.classpath
 /.project
 /.settings
+node_modules
 /RUNNING_PID
