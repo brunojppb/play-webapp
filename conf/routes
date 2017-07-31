@@ -1,4 +1,6 @@
 GET     /                           controllers.ApplicationController.index
+GET     /login                      controllers.ApplicationController.login
+POST    /login                      controllers.ApplicationController.doLogin
 GET     /data                       controllers.ApplicationController.data
 
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

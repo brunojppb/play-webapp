@@ -11,11 +11,12 @@ import actors.StatsActor
 import actors.StatsActor.Ping
 import akka.actor.Props
 import filters.StatsFilter
+import play.api.cache.ehcache.EhCacheComponents
 import play.api.db.{DBComponents, HikariCPComponents}
 import play.api.db.evolutions.{DynamicEvolutions, EvolutionsComponents}
 import play.api.routing.Router
 import play.filters.HttpFiltersComponents
-import service.{SunService, WeatherService}
+import service.{AuthService, SunService, WeatherService}
 import scalikejdbc.config.DBs
 
 import scala.concurrent.Future
@@ -33,7 +34,8 @@ class AppApplicationLoader extends ApplicationLoader {
 }
 
 class AppComponents(context: Context) extends BuiltInComponentsFromContext(context)
-  with AhcWSComponents with HttpFiltersComponents with EvolutionsComponents with DBComponents with HikariCPComponents with AssetsComponents {
+  with AhcWSComponents with HttpFiltersComponents with EvolutionsComponents
+  with DBComponents with HikariCPComponents with AssetsComponents with EhCacheComponents {
 
   override lazy val controllerComponents = wire[DefaultControllerComponents]
   lazy val prefix: String = "/"
@@ -42,6 +44,7 @@ class AppComponents(context: Context) extends BuiltInComponentsFromContext(conte
   lazy val sunService = wire[SunService]
   lazy val weatherService = wire[WeatherService]
   lazy val statsFilter = wire[StatsFilter]
+  lazy val authService = new AuthService(defaultCacheApi.sync)
   lazy val statsActor = actorSystem.actorOf(Props(wire[StatsActor]), StatsActor.name)
 
   override def httpFilters: Seq[EssentialFilter] = Seq(statsFilter)

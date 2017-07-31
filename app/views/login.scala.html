@@ -1,0 +1,36 @@
+@(maybeErrorMessage: Option[String] = None)
+<html lang="en">
+    <head>
+        <title>Login Page</title>
+        <link rel="stylesheet" href="@routes.Assets.versioned("compiled/styles.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+    </head>
+    <body>
+        <main container>
+            <div class="grid">
+                <div class="col-6 pull-col-4">
+                    <form method="post" action="/login" class="form">
+                        <fieldset>
+                            <legend>Login</legend>
+                            @for(message <- maybeErrorMessage) {
+                                <section class="alert-box -error">
+                                    <p>@message</p>
+                                    <a class="close" href="#">×</a>
+                                </section>
+                            }
+                            <div class="form-item">
+                                <label for="username">Username:</label>
+                                <input id="username" name="username"/>
+                            </div>
+                            <div class="form-item">
+                                <label for="password">Password:</label>
+                                <input id="password" name="password" type="password"/>
+                            </div>
+                            <button type="submit" class="-affix">Login</button>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </body>
+</html>
